@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_below="@id/tool_bar"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <me.mrrobot97.designer.customViews.CircleImageView
+        android:transitionName="@string/transitionAvatar"
+        android:id="@+id/avatar"
+        android:src="@drawable/ic_account"
+        android:scaleType="centerCrop"
+        android:layout_margin="4dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"/>
+
+    <TextView
+        android:text="title"
+        android:id="@+id/shot_title"
+        android:textAllCaps="false"
+        android:textColor="@color/textColorWhite"
+        android:layout_toRightOf="@id/avatar"
+        android:layout_margin="2dp"
+        android:maxLines="1"
+        android:textSize="20sp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:text="by"
+        android:id="@+id/by"
+        android:textAllCaps="false"
+        android:layout_marginRight="5dp"
+        android:textColor="@color/textColorLight"
+        android:layout_toRightOf="@id/avatar"
+        android:layout_marginLeft="2dp"
+        android:layout_below="@id/shot_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/author"
+        android:text="author"
+        android:textColor="@color/colorAccent"
+        android:layout_toRightOf="@id/by"
+        android:layout_below="@id/shot_title"
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+    android:id="@+id/image_view"
+    android:layout_below="@id/author"
+    android:layout_marginTop="5dp"
+    android:scaleType="fitCenter"
+    android:layout_marginBottom="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:transitionName="@string/transitionImage"/>
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/attachment_layout"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/linear_layout"
+        android:background="@color/textColorWhite"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <ImageView
+            android:id="@+id/attachment_image"
+            android:src="@drawable/link"
+            android:layout_margin="15dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"/>
+
+        <TextView
+            android:text="Attachments"
+            android:textColor="@color/textColorDark"
+            android:layout_toRightOf="@id/attachment_image"
+            android:layout_centerVertical="true"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:visibility="gone"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:id="@+id/recyclerview"
+        android:layout_below="@id/attachment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.RecyclerView>
+
+    <RelativeLayout
+        android:id="@+id/comments_layout"
+        android:layout_below="@+id/recyclerview"
+        android:background="@color/textColorWhite"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <ImageView
+            android:id="@+id/comment_image"
+            android:src="@drawable/comments"
+            android:layout_margin="15dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"/>
+
+        <TextView
+            android:text="Comments"
+            android:textColor="@color/textColorDark"
+            android:layout_toRightOf="@id/comment_image"
+            android:layout_centerVertical="true"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/comments_layout"
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <LinearLayout
+        android:id="@+id/linear_layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/image_view"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="3dp"
+            android:id="@+id/view_cnt"
+            android:text="0"
+            android:textSize="15sp"
+            android:textColor="@color/textColorWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_marginRight="20dp"
+            android:textSize="12sp"
+            android:textAllCaps="false"
+            android:text="Viewers"
+            android:textColor="@color/textColorDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/comments_cnt"
+            android:layout_marginRight="3dp"
+            android:text="0"
+            android:textSize="15sp"
+            android:textColor="@color/textColorWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_marginRight="20dp"
+            android:textSize="12sp"
+            android:textAllCaps="false"
+            android:text="Comments"
+            android:textColor="@color/textColorDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_marginRight="3dp"
+            android:id="@+id/likes_cnt"
+            android:text="0"
+            android:textSize="15sp"
+            android:textColor="@color/textColorLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_marginRight="20dp"
+            android:textSize="12sp"
+            android:textAllCaps="false"
+            android:text="Likes"
+            android:textColor="@color/textColorDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/share_iv"
+            android:scaleType="centerCrop"
+            android:src="@drawable/share"
+            android:layout_width="20dp"
+            android:layout_height="20dp"/>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <android.support.v7.widget.RecyclerView
+        android:background="@color/colorPrimary"
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:gravity="center"
+        android:id="@+id/view_loading"
+        android:background="@color/viewLoadingBg"
+        android:visibility="gone"
+        android:textAlignment="center"
+        android:text="Loading more......"
+        android:textColor="@color/textColorLight"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+    <include layout="@layout/internet_error_view"/>
+</RelativeLayout>
