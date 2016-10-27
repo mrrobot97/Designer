@@ -12,12 +12,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.mrrobot97.designer.R;
+import me.mrrobot97.designer.Utils.NetUtils;
 import me.mrrobot97.designer.Utils.ScreenUtils;
 import me.mrrobot97.designer.model.Shot;
 import me.mrrobot97.designer.presenter.BrowsePresenterImpl;
@@ -114,8 +116,21 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
                 mRefreshLayout.setRefreshing(true);
             }
         });
+        if(NetUtils.isNetworkOnline(this)){
+            loadData();
+        }else{
+            Toast.makeText(this, "No internet connect", Toast.LENGTH_SHORT).show();
+            mRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    mRefreshLayout.setRefreshing(false);
+                }
+            });
+            for(BaseFragment fragment:mFragments){
+                fragment.showNetErrorView();
+            }
+        }
 
-        loadData();
     }
 
     private void loadData() {
@@ -133,19 +148,29 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
     }
 
     @Override
-    public void loadShots(int postion, List<Shot> shots) {
+    public void loadShots(int postion, List<Shot> shots,boolean success) {
+        if(!success){
+            mFragments[postion].showNetErrorView();
+            mRefreshLayout.setRefreshing(false);
+            return;
+        }
         mFragments[postion].setData(shots);
         mRefreshLayout.setRefreshing(false);
     }
 
     @Override
-    public void refreshShots(int position, List<Shot> shots) {
+    public void refreshShots(int position, List<Shot> shots,boolean success) {
+        if(!success){
+            mFragments[position].showNetErrorView();
+            mRefreshLayout.setRefreshing(false);
+            return;
+        }
         mFragments[position].refreshDate(shots);
         mRefreshLayout.setRefreshing(false);
     }
 
     @Override
-    public void loadMore(int position, List<Shot> shots) {
+    public void loadMore(int position, List<Shot> shots,boolean success) {
         mFragments[position].loadMoreData(shots);
         mRefreshLayout.setRefreshing(false);
     }

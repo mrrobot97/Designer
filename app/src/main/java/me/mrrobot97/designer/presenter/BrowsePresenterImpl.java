@@ -30,8 +30,8 @@ public class BrowsePresenterImpl implements IBrowsePresenter{
         pages[position]=1;
         mModel.loadShots(sorts[position], pages[position], PER_PAGE, new IModel.ShotsListener() {
             @Override
-            public void onShotsLoaded(List<Shot> shots) {
-                mView.loadShots(position,shots);
+            public void onShotsLoaded(List<Shot> shots,boolean success) {
+                mView.loadShots(position,shots,success);
                 pages[position]++;
             }
         });
@@ -42,8 +42,8 @@ public class BrowsePresenterImpl implements IBrowsePresenter{
         pages[position]=1;
         mModel.loadShots(sorts[position], pages[position], PER_PAGE, new IModel.ShotsListener() {
             @Override
-            public void onShotsLoaded(List<Shot> shots) {
-                mView.refreshShots(position,shots);
+            public void onShotsLoaded(List<Shot> shots,boolean success) {
+                mView.refreshShots(position,shots,success);
                 pages[position]++;
             }
         });
@@ -53,8 +53,8 @@ public class BrowsePresenterImpl implements IBrowsePresenter{
     public void loadMore(final int position) {
         mModel.loadShots(sorts[position], pages[position], PER_PAGE, new IModel.ShotsListener() {
             @Override
-            public void onShotsLoaded(List<Shot> shots) {
-                mView.loadMore(position,shots);
+            public void onShotsLoaded(List<Shot> shots,boolean success) {
+                mView.loadMore(position,shots,success);
                 pages[position]++;
             }
         });

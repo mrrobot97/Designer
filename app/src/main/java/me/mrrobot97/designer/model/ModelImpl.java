@@ -36,11 +36,12 @@ public class ModelImpl implements IModel {
                         @Override
                         public void onError(Throwable e) {
                             Log.d("yjw","onError");
+                            listener.onShotsLoaded(null,false);
                         }
 
                         @Override
                         public void onNext(List<Shot> shots) {
-                            listener.onShotsLoaded(shots);
+                            listener.onShotsLoaded(shots,true);
                         }
                     });
         }else{
@@ -56,11 +57,12 @@ public class ModelImpl implements IModel {
                         @Override
                         public void onError(Throwable e) {
                             Log.d("yjw","onError");
+                            listener.onShotsLoaded(null,false);
                         }
 
                         @Override
                         public void onNext(List<Shot> shots) {
-                            listener.onShotsLoaded(shots);
+                            listener.onShotsLoaded(shots,true);
                         }
                     });
         }

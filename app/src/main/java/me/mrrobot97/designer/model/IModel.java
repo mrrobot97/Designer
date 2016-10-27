@@ -22,7 +22,7 @@ public interface IModel {
 
 
     interface ShotsListener{
-        void onShotsLoaded(List<Shot> shots);
+        void onShotsLoaded(List<Shot> shots,boolean success);
     }
     interface ShotListener{
         void onShotLoaded(Shot shot);

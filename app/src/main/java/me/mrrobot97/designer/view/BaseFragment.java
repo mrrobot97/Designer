@@ -50,10 +50,16 @@ public class BaseFragment extends Fragment {
         mListener = listener;
     }
 
-    public void setNetErrorView(){
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        loadingView.setVisibility(View.GONE);
-        netErrorView.setVisibility(View.VISIBLE);
+    public void showNetErrorView(){
+        if(mRecyclerView!=null){
+            mRecyclerView.setVisibility(View.INVISIBLE);
+        }
+        if(loadingView!=null){
+            loadingView.setVisibility(View.GONE);
+        }
+        if(netErrorView!=null){
+            netErrorView.setVisibility(View.VISIBLE);
+        }
     }
 
     public void cancelNetErrorView(){

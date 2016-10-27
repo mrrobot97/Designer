@@ -9,9 +9,9 @@ import me.mrrobot97.designer.model.Shot;
  */
 
 public interface IBrowseView {
-    void loadShots(int position,List<Shot> shots);
-    void refreshShots(int position,List<Shot> shots);
-    void loadMore(int position,List<Shot> shots);
+    void loadShots(int position,List<Shot> shots,boolean success);
+    void refreshShots(int position,List<Shot> shots,boolean success);
+    void loadMore(int position,List<Shot> shots,boolean success);
     void showLoading();
     void showError();
     void requestPermissions();
