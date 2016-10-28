@@ -4,10 +4,12 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.util.TimeUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -31,14 +33,18 @@ import me.mrrobot97.designer.presenter.IBrowsePresenter;
 import static android.view.View.GONE;
 
 public class BrowseActivity extends AppCompatActivity implements IBrowseView{
+    @BindView(R.id.activity_browse)RelativeLayout mContainer;
     @BindView(R.id.tool_bar)Toolbar mToolbar;
     @BindView(R.id.swipe_refresh_layout)SwipeRefreshLayout mRefreshLayout;
     @BindView(R.id.tab_layout)TabLayout mTabLayout;
     @BindView(R.id.view_pager)ViewPager mViewPager;
     @BindView(R.id.net_error_view)RelativeLayout mNetErrorView;
+
+    private Snackbar mSnackBar;
     private FragmentPagerAdapter mAdapter;
     private String[] mTitles=new String[]{"Popular","Debuts","Recent"};
     private static final int REQUEST_CODE=0;
+    private boolean isSnackBarShown=false;
 
 
     private BaseFragment[] mFragments=new BaseFragment[3];
@@ -63,6 +69,11 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
     }
 
     private void init() {
+        mSnackBar=Snackbar.make(mContainer,"Sure to exit?",Snackbar.LENGTH_INDEFINITE).setAction("Sure", new View.OnClickListener() {
+            @Override public void onClick(View view) {
+                finish();
+            }
+        });
         mFragments[0]=BaseFragment.newInstance(R.layout.fragment_layout);
         mFragments[1]=BaseFragment.newInstance(R.layout.fragment_layout);
         mFragments[2]=BaseFragment.newInstance(R.layout.fragment_layout);
@@ -224,4 +235,16 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
             }
         }
     }
+
+    @Override public void onBackPressed() {
+        if(isSnackBarShown){
+            mSnackBar.dismiss();
+            isSnackBarShown=false;
+        }else{
+            mSnackBar.show();
+            isSnackBarShown=true;
+        }
+
+    }
+
 }

@@ -387,4 +387,6 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView{
             }
         }
     }
+
+
 }
