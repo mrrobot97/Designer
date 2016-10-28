@@ -11,7 +11,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.List;
@@ -25,11 +28,14 @@ import me.mrrobot97.designer.model.Shot;
 import me.mrrobot97.designer.presenter.BrowsePresenterImpl;
 import me.mrrobot97.designer.presenter.IBrowsePresenter;
 
+import static android.view.View.GONE;
+
 public class BrowseActivity extends AppCompatActivity implements IBrowseView{
     @BindView(R.id.tool_bar)Toolbar mToolbar;
     @BindView(R.id.swipe_refresh_layout)SwipeRefreshLayout mRefreshLayout;
     @BindView(R.id.tab_layout)TabLayout mTabLayout;
     @BindView(R.id.view_pager)ViewPager mViewPager;
+    @BindView(R.id.net_error_view)RelativeLayout mNetErrorView;
     private FragmentPagerAdapter mAdapter;
     private String[] mTitles=new String[]{"Popular","Debuts","Recent"};
     private static final int REQUEST_CODE=0;
@@ -120,6 +126,7 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
             loadData();
         }else{
             Toast.makeText(this, "No internet connect", Toast.LENGTH_SHORT).show();
+            mNetErrorView.setVisibility(View.VISIBLE);
             mRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
@@ -150,10 +157,12 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
     @Override
     public void loadShots(int postion, List<Shot> shots,boolean success) {
         if(!success){
+            mNetErrorView.setVisibility(View.VISIBLE);
             mFragments[postion].showNetErrorView();
             mRefreshLayout.setRefreshing(false);
             return;
         }
+        mNetErrorView.setVisibility(GONE);
         mFragments[postion].setData(shots);
         mRefreshLayout.setRefreshing(false);
     }
@@ -161,10 +170,12 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
     @Override
     public void refreshShots(int position, List<Shot> shots,boolean success) {
         if(!success){
+            mNetErrorView.setVisibility(View.VISIBLE);
             mFragments[position].showNetErrorView();
             mRefreshLayout.setRefreshing(false);
             return;
         }
+        mNetErrorView.setVisibility(GONE);
         mFragments[position].refreshDate(shots);
         mRefreshLayout.setRefreshing(false);
     }

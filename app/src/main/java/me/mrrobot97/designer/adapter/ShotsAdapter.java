@@ -30,7 +30,7 @@ public class ShotsAdapter extends RecyclerView.Adapter{
     private List<Shot> mData;
     private int screenWidth;
     private Context mContext;
-    private static final int offset=8;
+    private static final int offset=4;
 
     public ShotsAdapter(List<Shot> data, Context context) {
         mData = data;

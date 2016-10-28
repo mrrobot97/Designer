@@ -32,7 +32,7 @@ public class BrowsePresenterImpl implements IBrowsePresenter{
             @Override
             public void onShotsLoaded(List<Shot> shots,boolean success) {
                 mView.loadShots(position,shots,success);
-                pages[position]++;
+                if(success) pages[position]++;
             }
         });
     }
@@ -44,7 +44,7 @@ public class BrowsePresenterImpl implements IBrowsePresenter{
             @Override
             public void onShotsLoaded(List<Shot> shots,boolean success) {
                 mView.refreshShots(position,shots,success);
-                pages[position]++;
+                if(success)pages[position]++;
             }
         });
     }
@@ -55,7 +55,7 @@ public class BrowsePresenterImpl implements IBrowsePresenter{
             @Override
             public void onShotsLoaded(List<Shot> shots,boolean success) {
                 mView.loadMore(position,shots,success);
-                pages[position]++;
+                if(success)pages[position]++;
             }
         });
     }
