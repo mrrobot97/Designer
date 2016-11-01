@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Designer</string>
-    <string name="transitionImage">Shared_Image</string>
-    <string name="transitionAvatar">Shared_Avatar</string>
+  <string name="app_name">Designer</string>
+  <string name="transitionImage">Shared_Image</string>
+  <string name="transitionAvatar">Shared_Avatar</string>
 </resources>

@@ -1,9 +1,7 @@
 package me.mrrobot97.designer.model;
 
 import android.util.Log;
-
 import java.util.List;
-
 import me.mrrobot97.designer.retrofit.ApiClient;
 import me.mrrobot97.designer.retrofit.DribbbleService;
 import rx.Subscriber;
@@ -185,4 +183,22 @@ public class ModelImpl implements IModel {
                 });
     }
 
+  @Override public void loadUserProfile(String token, final UserListener listener) {
+      observable.loadUserProfile(token)
+          .subscribeOn(Schedulers.newThread())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(new Subscriber<User>() {
+            @Override public void onCompleted() {
+
+            }
+
+            @Override public void onError(Throwable e) {
+              Log.d("yjw","user profile load error");
+            }
+
+            @Override public void onNext(User user) {
+              listener.onUserLoaded(user);
+            }
+          });
+  }
 }

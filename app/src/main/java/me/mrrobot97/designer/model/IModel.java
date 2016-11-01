@@ -11,7 +11,6 @@ public interface IModel {
 
     void loadShotDetail(String id,ShotListener listener);
 
-
     void loadUser(String id,UserListener listener);
 
     void loadComments(String shotId,CommentsListener listener);
@@ -20,6 +19,7 @@ public interface IModel {
 
     void loadAttachments(String id,AttachmentsLoadListener listener);
 
+    void loadUserProfile(String token,UserListener listener);
 
     interface ShotsListener{
         void onShotsLoaded(List<Shot> shots,boolean success);

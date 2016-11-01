@@ -8,4 +8,5 @@ public interface IBrowsePresenter {
     void load(int position);
     void refresh(int position);
     void loadMore(int position);
+    void loadUserProile(String token);
 }

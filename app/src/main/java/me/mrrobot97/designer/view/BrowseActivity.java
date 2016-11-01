@@ -1,6 +1,7 @@
 package me.mrrobot97.designer.view;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,24 +10,24 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.util.TimeUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import java.util.List;
 import me.mrrobot97.designer.R;
 import me.mrrobot97.designer.Utils.NetUtils;
 import me.mrrobot97.designer.Utils.ScreenUtils;
+import me.mrrobot97.designer.Utils.SharedPreferencesUtils;
 import me.mrrobot97.designer.model.Shot;
+import me.mrrobot97.designer.model.User;
 import me.mrrobot97.designer.presenter.BrowsePresenterImpl;
 import me.mrrobot97.designer.presenter.IBrowsePresenter;
 
@@ -45,6 +46,7 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
     private String[] mTitles=new String[]{"Popular","Debuts","Recent"};
     private static final int REQUEST_CODE=0;
     private boolean isSnackBarShown=false;
+    private boolean isLogin=false;
 
 
     private BaseFragment[] mFragments=new BaseFragment[3];
@@ -60,6 +62,24 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         mToolbar.setNavigationIcon(R.drawable.ic_menu);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.log_out:
+                        SharedPreferencesUtils.putToSpfs(getApplicationContext(),"login",false);
+                        Intent intent=new Intent(BrowseActivity.this,LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                        break;
+                    case R.id.user:
+                        mPresenter.loadUserProile((String) SharedPreferencesUtils.getFromSpfs(getApplicationContext(),"access_token",null));
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
         mPresenter=new BrowsePresenterImpl(this);
         if(!ifPermissionGranted()){
             requestPermissions();
@@ -69,6 +89,8 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
     }
 
     private void init() {
+        isLogin=
+            (boolean) SharedPreferencesUtils.getFromSpfs(getApplicationContext(),"login",false);
         mSnackBar=Snackbar.make(mContainer,"Sure to exit?",Snackbar.LENGTH_INDEFINITE).setAction("Sure", new View.OnClickListener() {
             @Override public void onClick(View view) {
                 finish();
@@ -197,16 +219,6 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
         mRefreshLayout.setRefreshing(false);
     }
 
-    @Override
-    public void showLoading() {
-
-    }
-
-    @Override
-    public void showError() {
-
-    }
-
     public boolean ifPermissionGranted(){
         if(ActivityCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.READ_EXTERNAL_STORAGE)
                 !=PackageManager.PERMISSION_GRANTED||ActivityCompat.checkSelfPermission(this,Manifest.permission.INTERNET)
@@ -222,6 +234,17 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
     public void requestPermissions() {
         ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.INTERNET,Manifest.permission.READ_EXTERNAL_STORAGE
                 ,Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_CODE);
+    }
+
+    @Override public void openUserPanel(User user) {
+        if(isLogin){
+            Intent intent=new Intent(BrowseActivity.this,PlayerActivity.class);
+            intent.putExtra("author",user);
+            startActivity(intent);
+        }else{
+            Toast.makeText(this, "You are not signed in.", Toast.LENGTH_SHORT).show();
+        }
+        
     }
 
     @Override
@@ -247,4 +270,14 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
 
     }
 
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_browse,menu);
+        MenuItem item=menu.getItem(1);
+        if(isLogin){
+            item.setTitle("Log out");
+        }else{
+            item.setTitle("Sign in");
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
 }

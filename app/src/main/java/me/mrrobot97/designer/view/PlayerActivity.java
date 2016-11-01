@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -44,6 +45,9 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView ,Vi
     @BindView(R.id.dribbble_link)ImageView dribbbleLink;
     @BindView(R.id.hover_view)HoverView mHoverView;
     @BindView(R.id.front_image_view)ImageView frontImageView;
+    @BindView(R.id.twitter_view)RelativeLayout twitterView;
+    @BindView(R.id.website_view)RelativeLayout webView;
+    @BindView(R.id.dribbble_view)RelativeLayout dribbbleView;
 
     private User mUser;
     private List<Shot> shots;
@@ -52,7 +56,6 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView ,Vi
     private IPlayerPresenter mPresenter;
     private ValueAnimator mAnimator;
 
-    //// TODO: 16/10/24  添加共享动画
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,12 +137,33 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView ,Vi
         followers.setText(mUser.getFollowers_count()+"");
         followings.setText(mUser.getFollowings_count()+"");
         mPresenter.loadUserShots(mUser.getId());
-        twitterUrl.setText(mUser.getLinks().getTwitter());
-        websiteUrl.setText(mUser.getLinks().getWeb());
-        dribbbleUrl.setText(mUser.getUsername());
-        twitterLink.setOnClickListener(this);
-        browserLink.setOnClickListener(this);
-        dribbbleLink.setOnClickListener(this);
+        if(checkNotNUll(mUser.getLinks().getTwitter())){
+            twitterUrl.setText(mUser.getLinks().getTwitter());
+          twitterLink.setOnClickListener(this);
+        }else{
+          twitterView.setVisibility(View.INVISIBLE);
+        }
+        if(checkNotNUll(mUser.getLinks().getWeb())){
+            websiteUrl.setText(mUser.getLinks().getWeb());
+          browserLink.setOnClickListener(this);
+        }else{
+          webView.setVisibility(View.INVISIBLE);
+        }
+        if(checkNotNUll(mUser.getUsername())){
+            dribbbleUrl.setText(mUser.getUsername());
+          dribbbleLink.setOnClickListener(this);
+        }else{
+          dribbbleView.setVisibility(View.INVISIBLE);
+        }
+
+
+
+    }
+
+    private boolean checkNotNUll(String str){
+        if (str==null) return false;
+        if(str.trim().length()==0) return  false;
+        return  true;
     }
 
     void jumpToUrl(String url){

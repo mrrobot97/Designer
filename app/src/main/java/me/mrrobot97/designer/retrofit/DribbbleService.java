@@ -36,5 +36,8 @@ public interface DribbbleService {
     @GET("shots/{id}/attachments")
     rx.Observable<List<Attachment>> loadAttachments(@Path("id")String id);
 
+    @GET("user")
+    rx.Observable<User> loadUserProfile(@Query("access_token")String token);
+
 
 }

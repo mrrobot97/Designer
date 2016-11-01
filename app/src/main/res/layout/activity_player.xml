@@ -233,6 +233,7 @@
                     android:layout_height="wrap_content"/>
             </RelativeLayout>
             <RelativeLayout
+                android:id="@+id/dribbble_view"
                 android:layout_marginTop="1dp"
                 android:background="@color/viewColorBackground"
                 android:layout_below="@id/website_view"

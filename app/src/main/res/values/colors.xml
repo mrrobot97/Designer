@@ -10,4 +10,5 @@
     <color name="textColorWhite">#EEEEEE</color>
     <color name="textColorBlack">#000000</color>
     <color name="viewColorBackground">#3C3C3C</color>
+    <color name="loginColorBg">#424242</color>
 </resources>
