@@ -22,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.mrrobot97.designer.R;
 import me.mrrobot97.designer.SwipeActivity.SwipeBackActivity;
+import me.mrrobot97.designer.Utils.SharedPreferencesUtils;
 import me.mrrobot97.designer.adapter.ShotsAdapter;
 import me.mrrobot97.designer.customViews.HoverView;
 import me.mrrobot97.designer.model.Shot;
@@ -125,7 +126,12 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView ,Vi
                 mAnimator.start();
             }
         });
-        showPlayerInfo();
+        if(mUser!=null){
+            showPlayerInfo();
+        }else{
+            mPresenter.loadUserProfile(
+                (String) SharedPreferencesUtils.getFromSpfs(this,"token",null));
+        }
 
     }
 
@@ -158,6 +164,11 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView ,Vi
 
 
 
+    }
+
+    @Override public void showPlayerInfoAsync(User user) {
+        mUser=user;
+        showPlayerInfo();
     }
 
     private boolean checkNotNUll(String str){

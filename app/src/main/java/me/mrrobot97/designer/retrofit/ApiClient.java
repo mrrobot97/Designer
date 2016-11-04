@@ -19,8 +19,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class ApiClient {
-  public static String baseUrl = "https://api.dribbble.com/v1/";
-  public static String access_token =
+  public static final String CACHE_DIR="CacheFile";
+  public static final String baseUrl = "https://api.dribbble.com/v1/";
+  public static final String access_token =
       "a62b88ea291c0d0e5b9295fdb8930936f945027bb84ff747ef6b89f8a9cd4da1";
 
   private static Retrofit retrofit;
@@ -45,14 +46,14 @@ public class ApiClient {
               }
               Response response = chain.proceed(request);
               if (NetUtils.isNetworkOnline(MyApplication.getContext())) {
-                int maxAge = 60 * 60 * 4; // read from cache for 4 hour
+                int maxAge = 60 * 60 * 1; // read from cache for 1 hour
                 return response.newBuilder()
                     .removeHeader("Pragma")
                     .removeHeader("Cache-Control")
                     .header("Cache-Control", "public, max-age=" + maxAge)
                     .build();
               } else {
-                int maxStale = 60 * 60 * 24 * 3; // tolerate 3 day
+                int maxStale = 60 * 60 * 24 * 7; // tolerate one week
                 return response.newBuilder()
                     .removeHeader("Pragma")
                     .removeHeader("Cache-Control")
@@ -63,7 +64,7 @@ public class ApiClient {
           };
           //设置OKHttpClient的缓存目录
           File cacheDir = MyApplication.getContext().getCacheDir();
-          File cacheFile = new File(cacheDir, "CacheFile");
+          File cacheFile = new File(cacheDir, CACHE_DIR);
 
           OkHttpClient client =
               new OkHttpClient.Builder()

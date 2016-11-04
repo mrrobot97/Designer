@@ -6,4 +6,5 @@ package me.mrrobot97.designer.presenter;
 
 public interface IPlayerPresenter {
     void loadUserShots(String userId);
+    void loadUserProfile(String token);
 }

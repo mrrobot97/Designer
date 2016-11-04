@@ -5,6 +5,7 @@ import java.util.List;
 import me.mrrobot97.designer.model.IModel;
 import me.mrrobot97.designer.model.ModelImpl;
 import me.mrrobot97.designer.model.Shot;
+import me.mrrobot97.designer.model.User;
 import me.mrrobot97.designer.view.IPlayerView;
 
 /**
@@ -30,4 +31,11 @@ public class PlayerPresenterImpl implements IPlayerPresenter {
         });
     }
 
+    @Override public void loadUserProfile(String token) {
+        mModel.loadUserProfile(token, new IModel.UserListener() {
+            @Override public void onUserLoaded(User user) {
+                mView.showPlayerInfoAsync(user);
+            }
+        });
+    }
 }

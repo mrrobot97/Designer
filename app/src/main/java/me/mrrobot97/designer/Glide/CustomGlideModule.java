@@ -11,7 +11,7 @@ import com.bumptech.glide.module.GlideModule;
  */
 
 public class CustomGlideModule implements GlideModule {
-  private int cacheSize=1024*1024*200;  //100MB
+  private int cacheSize=1024*1024*200;  //200MB
   @Override public void applyOptions(Context context, GlideBuilder builder) {
     builder.setDiskCache(new InternalCacheDiskCacheFactory(context,cacheSize));
   }

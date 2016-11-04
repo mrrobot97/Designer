@@ -4,7 +4,6 @@ import java.util.List;
 import me.mrrobot97.designer.model.IModel;
 import me.mrrobot97.designer.model.ModelImpl;
 import me.mrrobot97.designer.model.Shot;
-import me.mrrobot97.designer.model.User;
 import me.mrrobot97.designer.view.IBrowseView;
 
 /**
@@ -56,14 +55,6 @@ public class BrowsePresenterImpl implements IBrowsePresenter{
             public void onShotsLoaded(List<Shot> shots,boolean success) {
                 mView.loadMore(position,shots,success);
                 if(success)pages[position]++;
-            }
-        });
-    }
-
-    @Override public void loadUserProile(String token) {
-        mModel.loadUserProfile(token, new IModel.UserListener() {
-            @Override public void onUserLoaded(User user) {
-                mView.openUserPanel(user);
             }
         });
     }

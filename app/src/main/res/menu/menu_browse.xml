@@ -10,4 +10,7 @@
       android:title="Log out"
       app:showAsAction="never"
       />
+  <item android:id="@+id/clear_cache"
+    android:title="Clear Cache"
+    app:showAsAction="never"/>
 </menu>

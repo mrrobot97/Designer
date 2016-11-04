@@ -23,6 +23,13 @@
 	3.	Retrofit
 	4.	OkHttp
 	5.	Glide
+
+feature:
+
+	1.页面支持滑动返回。
+	2.离线缓存浏览。
+	
+	
 	
 todo list：
 
