@@ -27,35 +27,26 @@ public class BrowsePresenterImpl implements IBrowsePresenter{
     @Override
     public void load(final int position) {
         pages[position]=1;
-        mModel.loadShots(sorts[position], pages[position], PER_PAGE, new IModel.ShotsListener() {
-            @Override
-            public void onShotsLoaded(List<Shot> shots,boolean success) {
+        mModel.loadShots(sorts[position], pages[position], PER_PAGE, (List<Shot> shots,boolean success)-> {
                 mView.loadShots(position,shots,success);
                 if(success) pages[position]++;
-            }
-        });
+            });
     }
 
     @Override
     public void refresh(final int position) {
         pages[position]=1;
-        mModel.loadShots(sorts[position], pages[position], PER_PAGE, new IModel.ShotsListener() {
-            @Override
-            public void onShotsLoaded(List<Shot> shots,boolean success) {
+        mModel.loadShots(sorts[position], pages[position], PER_PAGE, (List<Shot> shots,boolean success) -> {
                 mView.refreshShots(position,shots,success);
                 if(success)pages[position]++;
-            }
         });
     }
 
     @Override
     public void loadMore(final int position) {
-        mModel.loadShots(sorts[position], pages[position], PER_PAGE, new IModel.ShotsListener() {
-            @Override
-            public void onShotsLoaded(List<Shot> shots,boolean success) {
+        mModel.loadShots(sorts[position], pages[position], PER_PAGE, (List<Shot> shots,boolean success) -> {
                 mView.loadMore(position,shots,success);
                 if(success)pages[position]++;
-            }
         });
     }
 }

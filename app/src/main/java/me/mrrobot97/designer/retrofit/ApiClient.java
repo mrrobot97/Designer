@@ -1,7 +1,6 @@
 package me.mrrobot97.designer.retrofit;
 
 import java.io.File;
-import java.io.IOException;
 import me.mrrobot97.designer.SwipeActivity.MyApplication;
 import me.mrrobot97.designer.Utils.NetUtils;
 import okhttp3.Cache;
@@ -30,8 +29,7 @@ public class ApiClient {
     if (retrofit == null) {
       synchronized (Retrofit.class) {
         if (retrofit == null) {
-          Interceptor interceptor = new Interceptor() {
-            @Override public Response intercept(Interceptor.Chain chain) throws IOException {
+          Interceptor interceptor = chain ->  {
               Request original = chain.request();
               Request request = null;
               if (NetUtils.isNetworkOnline(MyApplication.getContext())) {
@@ -60,7 +58,6 @@ public class ApiClient {
                     .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
                     .build();
               }
-            }
           };
           //设置OKHttpClient的缓存目录
           File cacheDir = MyApplication.getContext().getCacheDir();

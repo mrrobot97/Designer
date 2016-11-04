@@ -16,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import butterknife.BindView;
@@ -47,13 +46,10 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView {
   private static final int REQUEST_CODE = 0;
   private boolean isSnackBarShown = false;
   private boolean isLogin = false;
-  private Runnable runnable = new Runnable() {
-    @Override public void run() {
-      if (mRefreshLayout != null) {
-        mRefreshLayout.setRefreshing(false);
-      }
-    }
-  };
+  private Runnable runnable = ()->{
+    if (mRefreshLayout != null) {
+    mRefreshLayout.setRefreshing(false);
+  }};
 
   private BaseFragment[] mFragments = new BaseFragment[3];
 
@@ -67,25 +63,23 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView {
     getSupportActionBar().setDisplayShowTitleEnabled(false);
     //getSupportActionBar().setDisplayShowHomeEnabled(true);
     //mToolbar.setNavigationIcon(R.drawable.ic_menu);
-    mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-      @Override public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-          case R.id.log_out:
-            SharedPreferencesUtils.putToSpfs(getApplicationContext(), "login", false);
-            Intent intent = new Intent(BrowseActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-            break;
-          case R.id.user:
-            showUserProfile();
-            break;
-          case R.id.clear_cache:
-            clearUserCache();
-          default:
-            break;
-        }
-        return true;
+    mToolbar.setOnMenuItemClickListener(item -> {
+      switch (item.getItemId()) {
+        case R.id.log_out:
+          SharedPreferencesUtils.putToSpfs(getApplicationContext(), "login", false);
+          Intent intent = new Intent(BrowseActivity.this, LoginActivity.class);
+          startActivity(intent);
+          finish();
+          break;
+        case R.id.user:
+          showUserProfile();
+          break;
+        case R.id.clear_cache:
+          clearUserCache();
+        default:
+          break;
       }
+      return true;
     });
     mPresenter = new BrowsePresenterImpl(this);
     if (!ifPermissionGranted()) {
@@ -96,26 +90,20 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView {
   }
 
   private void clearUserCache() {
-    new Thread(new Runnable() {
-      @Override public void run() {
+    new Thread(()->{
         //clear OKHttp cache
         FileUtils.deleteFileOrDir(getCacheDir().getAbsolutePath()+ File.separator+ ApiClient.CACHE_DIR);
         //clear Glide cache
         Glide.get(BrowseActivity.this).clearDiskCache();
         //Glide.get(BrowseActivity.this).clearMemory();
         Toast.makeText(BrowseActivity.this, "Clear Cache success", Toast.LENGTH_SHORT).show();
-      }
     }).start();
   }
 
   private void init() {
     isLogin = (boolean) SharedPreferencesUtils.getFromSpfs(getApplicationContext(), "login", false);
     mSnackBar = Snackbar.make(mContainer, "Sure to exit?", Snackbar.LENGTH_INDEFINITE)
-        .setAction("Sure", new View.OnClickListener() {
-          @Override public void onClick(View view) {
-            finish();
-          }
-        });
+        .setAction("Sure", view -> finish());
     mFragments[0] = BaseFragment.newInstance(R.layout.fragment_layout);
     mFragments[1] = BaseFragment.newInstance(R.layout.fragment_layout);
     mFragments[2] = BaseFragment.newInstance(R.layout.fragment_layout);
@@ -155,20 +143,14 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView {
         mRefreshLayout.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
       }
     });
-    mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-      @Override public void onRefresh() {
+    mRefreshLayout.setOnRefreshListener(()->{
         mPresenter.refresh(mViewPager.getCurrentItem());
         mRefreshLayout.setRefreshing(true);
-      }
     });
     //设置下拉刷新的出发高度为屏幕高度的1/3
     mRefreshLayout.setDistanceToTriggerSync(
         ScreenUtils.getScreenWidthAndHeight(getApplicationContext())[1] / 3);
-    mRefreshLayout.post(new Runnable() {
-      @Override public void run() {
-        mRefreshLayout.setRefreshing(true);
-      }
-    });
+    mRefreshLayout.post(()->mRefreshLayout.setRefreshing(true));
     loadData();
     if (!NetUtils.isNetworkOnline(this)) {
       Toast.makeText(this, "客官，您没有联网呦~", Toast.LENGTH_SHORT).show();
@@ -180,11 +162,7 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView {
       mPresenter.load(i);
       mFragments[i].showLoadingView();
       final int finalI = i;
-      mFragments[i].setListener(new BaseFragment.SlideToBottomListener() {
-        @Override public void whenSlideToBottom() {
-          mPresenter.loadMore(finalI);
-        }
-      });
+      mFragments[i].setListener(()->mPresenter.loadMore(finalI));
     }
   }
 

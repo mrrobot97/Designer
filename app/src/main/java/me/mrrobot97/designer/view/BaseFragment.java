@@ -78,19 +78,16 @@ public class BaseFragment extends Fragment {
         }
         mData=shots;
         mAdapter=new ShotsAdapter(mData,getContext());
-        mAdapter.setListener(new ShotsAdapter.OnItemClickListener() {
-            @Override
-            public void OnItemClicked(int position) {
-                Intent intent=new Intent(getContext(),DetailActivity.class);
-                intent.putExtra("shot",mData.get(position));
-                if(Build.VERSION.SDK_INT<Build.VERSION_CODES.LOLLIPOP){
-                    startActivity(intent);
-                }else{
-                    //5.0及以上系统实现共享元素动画
-                    ActivityOptionsCompat options=ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity()
-                            ,((ShotsAdapter.MyHolder)mRecyclerView.findViewHolderForAdapterPosition(position)).getImageView(),getString(R.string.transitionImage));
-                    ActivityCompat.startActivity(getActivity(),intent,options.toBundle());
-                }
+        mAdapter.setListener(position -> {
+            Intent intent=new Intent(getContext(),DetailActivity.class);
+            intent.putExtra("shot",mData.get(position));
+            if(Build.VERSION.SDK_INT<Build.VERSION_CODES.LOLLIPOP){
+                startActivity(intent);
+            }else{
+                //5.0及以上系统实现共享元素动画
+                ActivityOptionsCompat options=ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity()
+                    ,((ShotsAdapter.MyHolder)mRecyclerView.findViewHolderForAdapterPosition(position)).getImageView(),getString(R.string.transitionImage));
+                ActivityCompat.startActivity(getActivity(),intent,options.toBundle());
             }
         });
         mRecyclerView.setAdapter(mAdapter);

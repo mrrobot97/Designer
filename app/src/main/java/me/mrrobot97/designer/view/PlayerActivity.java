@@ -84,13 +84,10 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView ,Vi
         mAnimator=ValueAnimator.ofFloat(1f,0f);
         mAnimator.setDuration(200);
         mAnimator.setInterpolator(new DecelerateInterpolator());
-        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float alpha= (float) valueAnimator.getAnimatedValue();
-                mHoverView.setAlpha(alpha);
-                frontImageView.setAlpha(alpha);
-            }
+        mAnimator.addUpdateListener(valueAnimator -> {
+            float alpha= (float) valueAnimator.getAnimatedValue();
+            mHoverView.setAlpha(alpha);
+            frontImageView.setAlpha(alpha);
         });
         mAnimator.addListener(new Animator.AnimatorListener() {
             @Override
@@ -114,18 +111,8 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView ,Vi
 
             }
         });
-        frontImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAnimator.start();
-            }
-        });
-        mHoverView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAnimator.start();
-            }
-        });
+        frontImageView.setOnClickListener(view -> mAnimator.start());
+        mHoverView.setOnClickListener(view -> mAnimator.start());
         if(mUser!=null){
             showPlayerInfo();
         }else{
@@ -189,17 +176,13 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView ,Vi
     public void showShots(final List<Shot> shots) {
         this.shots=shots;
         mAdapter=new ShotsAdapter(shots,this);
-        mAdapter.setListener(new ShotsAdapter.OnItemClickListener() {
-            @Override
-            public void OnItemClicked(int position) {
-                Shot shot=shots.get(position);
-                Glide.with(PlayerActivity.this).load(shot.getImages().getHidpi()).crossFade().into(frontImageView);
-                frontImageView.setAlpha(1f);
-                mHoverView.setAlpha(1f);
-                mHoverView.setVisibility(View.VISIBLE);
-                frontImageView.setVisibility(View.VISIBLE);
-            }
-        });
+        mAdapter.setListener(position -> {
+            Shot shot=shots.get(position);
+            Glide.with(PlayerActivity.this).load(shot.getImages().getHidpi()).crossFade().into(frontImageView);
+            frontImageView.setAlpha(1f);
+            mHoverView.setAlpha(1f);
+            mHoverView.setVisibility(View.VISIBLE);
+            frontImageView.setVisibility(View.VISIBLE);});
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }

@@ -60,12 +60,9 @@ public class AttachmentsAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         Attachment attachment=mData.get(position);
         Glide.with(mContext).load(attachment.getThumbnail_url()).into(((MyHolder)holder).mImageView);
-        ((MyHolder)holder).mImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(mListener!=null){
-                    mListener.OnItemClicked(position);
-                }
+        ((MyHolder)holder).mImageView.setOnClickListener(view -> {
+            if(mListener!=null){
+                mListener.OnItemClicked(position);
             }
         });
     }

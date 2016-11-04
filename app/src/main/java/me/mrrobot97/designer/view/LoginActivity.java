@@ -75,16 +75,8 @@ public class LoginActivity extends AppCompatActivity {
     Typeface typeface=Typeface.createFromAsset(getAssets(),"fonts/New Walt Disney.ttf");
     mTxtLogo.setTypeface(typeface);
     client=new OkHttpClient();
-    mBtLogin.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        login();
-      }
-    });
-    mBtNon.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        nonLogin();
-      }
-    });
+    mBtLogin.setOnClickListener(view -> login());
+    mBtNon.setOnClickListener(view -> nonLogin());
     WebSettings settings=mWebView.getSettings();
     settings.setAppCacheEnabled(false);
     settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -140,11 +132,9 @@ public class LoginActivity extends AppCompatActivity {
 
       @Override public void onResponse(Call call, Response response) throws IOException {
         try {
-          loadingLayout.post(new Runnable() {
-            @Override public void run() {
-              loadingLayout.setVisibility(View.GONE);
-              backLayout.setVisibility(View.VISIBLE);
-            }
+          loadingLayout.post(()->{
+            loadingLayout.setVisibility(View.GONE);
+            backLayout.setVisibility(View.VISIBLE);
           });
           JSONObject object=new JSONObject(response.body().string());
           token=object.getString("access_token");
