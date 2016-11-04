@@ -31,15 +31,12 @@ import me.mrrobot97.designer.model.User;
 import me.mrrobot97.designer.presenter.BrowsePresenterImpl;
 import me.mrrobot97.designer.presenter.IBrowsePresenter;
 
-import static android.view.View.GONE;
-
 public class BrowseActivity extends AppCompatActivity implements IBrowseView{
     @BindView(R.id.activity_browse)RelativeLayout mContainer;
     @BindView(R.id.tool_bar)Toolbar mToolbar;
     @BindView(R.id.swipe_refresh_layout)SwipeRefreshLayout mRefreshLayout;
     @BindView(R.id.tab_layout)TabLayout mTabLayout;
     @BindView(R.id.view_pager)ViewPager mViewPager;
-    @BindView(R.id.net_error_view)RelativeLayout mNetErrorView;
 
     private Snackbar mSnackBar;
     private FragmentPagerAdapter mAdapter;
@@ -47,11 +44,19 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
     private static final int REQUEST_CODE=0;
     private boolean isSnackBarShown=false;
     private boolean isLogin=false;
+    private Runnable runnable=new Runnable() {
+        @Override public void run() {
+            if(mRefreshLayout!=null){
+                mRefreshLayout.setRefreshing(false);
+            }
+        }
+    };
 
 
     private BaseFragment[] mFragments=new BaseFragment[3];
 
     private IBrowsePresenter mPresenter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,22 +160,10 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
                 mRefreshLayout.setRefreshing(true);
             }
         });
-        if(NetUtils.isNetworkOnline(this)){
-            loadData();
-        }else{
-            Toast.makeText(this, "No internet connect", Toast.LENGTH_SHORT).show();
-            mNetErrorView.setVisibility(View.VISIBLE);
-            mRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    mRefreshLayout.setRefreshing(false);
-                }
-            });
-            for(BaseFragment fragment:mFragments){
-                fragment.showNetErrorView();
-            }
+        loadData();
+        if(!NetUtils.isNetworkOnline(this)){
+            Toast.makeText(this, "客官，您没有联网呦~", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     private void loadData() {
@@ -188,35 +181,40 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView{
     }
 
     @Override
-    public void loadShots(int postion, List<Shot> shots,boolean success) {
+    public void loadShots(int position, List<Shot> shots,boolean success) {
+        mRefreshLayout.post(runnable);
         if(!success){
-            mNetErrorView.setVisibility(View.VISIBLE);
-            mFragments[postion].showNetErrorView();
-            mRefreshLayout.setRefreshing(false);
-            return;
+            mFragments[position].setLoading(false);
+            Toast.makeText(this, "客官，数据加载出错了呦~", Toast.LENGTH_SHORT).show();
+        }else{
+          mFragments[position].setData(shots);
         }
-        mNetErrorView.setVisibility(GONE);
-        mFragments[postion].setData(shots);
-        mRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void refreshShots(int position, List<Shot> shots,boolean success) {
+        mRefreshLayout.post(runnable);
         if(!success){
-            mNetErrorView.setVisibility(View.VISIBLE);
-            mFragments[position].showNetErrorView();
-            mRefreshLayout.setRefreshing(false);
+            mFragments[position].setLoading(false);
+            Toast.makeText(this, "客官，数据加载出错了呦~", Toast.LENGTH_SHORT).show();
             return;
+        }else{
+          mFragments[position].refreshDate(shots);
         }
-        mNetErrorView.setVisibility(GONE);
-        mFragments[position].refreshDate(shots);
-        mRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void loadMore(int position, List<Shot> shots,boolean success) {
-        mFragments[position].loadMoreData(shots);
-        mRefreshLayout.setRefreshing(false);
+        mRefreshLayout.post(runnable);
+        mFragments[position].cancleLoadingView();
+        if(!success){
+            mFragments[position].setLoading(false);
+            Toast.makeText(this, "客官，加载出错了呦~", Toast.LENGTH_SHORT).show();
+            return;
+        }else{
+          mFragments[position].loadMoreData(shots);
+          mRefreshLayout.setRefreshing(false);
+        }
     }
 
     public boolean ifPermissionGranted(){

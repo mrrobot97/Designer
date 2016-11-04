@@ -13,13 +13,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import java.util.List;
 import me.mrrobot97.designer.R;
 import me.mrrobot97.designer.adapter.ShotsAdapter;
 import me.mrrobot97.designer.model.Shot;
@@ -32,13 +29,16 @@ public class BaseFragment extends Fragment {
 
     @BindView(R.id.recycler_view)RecyclerView mRecyclerView;
     @BindView(R.id.view_loading)TextView loadingView;
-    @BindView(R.id.net_error_view)RelativeLayout netErrorView;
 
-    String TAG="yjw";
     private static final String LAYOUT_ID="layout_id";
     private int layoutId;
     private ShotsAdapter mAdapter;
     private List<Shot> mData;
+
+    public void setLoading(boolean loading) {
+        isLoading = loading;
+    }
+
     private boolean isLoading=false;
 
     public interface SlideToBottomListener{
@@ -48,23 +48,6 @@ public class BaseFragment extends Fragment {
 
     public void setListener(SlideToBottomListener listener) {
         mListener = listener;
-    }
-
-    public void showNetErrorView(){
-        if(mRecyclerView!=null){
-            mRecyclerView.setVisibility(View.INVISIBLE);
-        }
-        if(loadingView!=null){
-            loadingView.setVisibility(View.GONE);
-        }
-        if(netErrorView!=null){
-            netErrorView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    public void cancelNetErrorView(){
-        mRecyclerView.setVisibility(View.VISIBLE);
-        netErrorView.setVisibility(View.GONE);
     }
 
     @Nullable
@@ -81,7 +64,6 @@ public class BaseFragment extends Fragment {
                 if(isSlideToBottom()){
                     if(mListener!=null&&!isLoading){
                         showLoadingView();
-                        isLoading=true;
                         mListener.whenSlideToBottom();
                     }
                 }
@@ -94,7 +76,6 @@ public class BaseFragment extends Fragment {
         if(mData!=null){
             throw new RuntimeException("You can call setData() only once!");
         }
-        cancelNetErrorView();
         mData=shots;
         mAdapter=new ShotsAdapter(mData,getContext());
         mAdapter.setListener(new ShotsAdapter.OnItemClickListener() {
@@ -118,10 +99,6 @@ public class BaseFragment extends Fragment {
     }
 
     public void refreshDate(List<Shot> shots){
-        cancelNetErrorView();
-        if(mData==null){
-            throw new RuntimeException("You must call setData() before refreshData()!");
-        }
         mData=shots;
         mAdapter.notifyDataSetChanged();
         loadingView.setVisibility(View.GONE);
@@ -145,6 +122,10 @@ public class BaseFragment extends Fragment {
             loadingView.setVisibility(View.VISIBLE);
             isLoading=true;
         }
+    }
+
+    public void cancleLoadingView(){
+      loadingView.setVisibility(View.GONE);
     }
 
     private boolean isSlideToBottom(){
