@@ -55,22 +55,27 @@ public class ShotsAdapter extends RecyclerView.Adapter {
   @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
     Shot shot = mData.get(position);
     //根据实际屏幕分辨率确定要加载的缩略图的尺寸
+    String url=null;
     if (screenWidth >= 720) {
-      Glide.with(mContext)
-          .load(shot.getImages().getNormal())
-          .crossFade()
-          .into(((MyHolder) holder).mImageView);
+      url=shot.getImages().getNormal();
+      if(!checkAvailable(url)) url=shot.getImages().getTeaser();
     } else {
-      Glide.with(mContext)
-          .load(shot.getImages().getTeaser())
-          .crossFade()
-          .into(((MyHolder) holder).mImageView);
+      url=shot.getImages().getTeaser();
     }
+    Glide.with(mContext)
+        .load(url)
+        .crossFade()
+        .into(((MyHolder) holder).mImageView);
     ((MyHolder) holder).mImageView.setOnClickListener(view -> {
       if (mListener != null) {
         mListener.OnItemClicked(position);
       }
     });
+  }
+
+  private boolean checkAvailable(String string){
+    if(string==null||string.trim().length()==0) return false;
+    return true;
   }
 
   @Override public int getItemCount() {

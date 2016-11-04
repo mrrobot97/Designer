@@ -38,9 +38,9 @@ public class AttachmentsAdapter extends RecyclerView.Adapter {
         screenWidth= ScreenUtils.getScreenWidthAndHeight(mContext)[0];
     }
 
-    private ShotsAdapter.OnItemClickListener mListener;
+    private OnItemClickListener mListener;
 
-    public void setListener(ShotsAdapter.OnItemClickListener listener) {
+    public void setListener(OnItemClickListener listener) {
         mListener = listener;
     }
 
@@ -62,7 +62,7 @@ public class AttachmentsAdapter extends RecyclerView.Adapter {
         Glide.with(mContext).load(attachment.getThumbnail_url()).into(((MyHolder)holder).mImageView);
         ((MyHolder)holder).mImageView.setOnClickListener(view -> {
             if(mListener!=null){
-                mListener.OnItemClicked(position);
+                mListener.onItemClicked(position);
             }
         });
     }
@@ -94,6 +94,6 @@ public class AttachmentsAdapter extends RecyclerView.Adapter {
     }
 
     public interface OnItemClickListener{
-        void OnItemClicked(int position);
+        void onItemClicked(int position);
     }
 }

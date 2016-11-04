@@ -24,6 +24,11 @@ public class ApiClient {
       "a62b88ea291c0d0e5b9295fdb8930936f945027bb84ff747ef6b89f8a9cd4da1";
 
   private static Retrofit retrofit;
+  private static OkHttpClient client;
+
+  public static OkHttpClient getClient(){
+    return client;
+  }
 
   public static Retrofit getRetrofit() {
     if (retrofit == null) {
@@ -63,7 +68,7 @@ public class ApiClient {
           File cacheDir = MyApplication.getContext().getCacheDir();
           File cacheFile = new File(cacheDir, CACHE_DIR);
 
-          OkHttpClient client =
+          client =
               new OkHttpClient.Builder()
                   .cache(new Cache(cacheFile, 1024 * 1024 * 50))
                   .addNetworkInterceptor(interceptor)

@@ -133,7 +133,6 @@ public class BaseFragment extends Fragment {
         return false;
     }
 
-
     public static BaseFragment newInstance(@LayoutRes int layout_id){
         Bundle bundle=new Bundle();
         bundle.putInt(LAYOUT_ID,layout_id);
@@ -141,6 +140,5 @@ public class BaseFragment extends Fragment {
         fragment.setArguments(bundle);
         return fragment;
     }
-
 
 }

@@ -2,9 +2,11 @@ package me.mrrobot97.designer.view;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +24,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.mrrobot97.designer.R;
 import me.mrrobot97.designer.SwipeActivity.SwipeBackActivity;
+import me.mrrobot97.designer.Utils.FileUtils;
 import me.mrrobot97.designer.Utils.SharedPreferencesUtils;
+import me.mrrobot97.designer.Utils.StringUtils;
 import me.mrrobot97.designer.adapter.ShotsAdapter;
 import me.mrrobot97.designer.customViews.HoverView;
 import me.mrrobot97.designer.model.Shot;
@@ -52,10 +56,12 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView ,Vi
 
     private User mUser;
     private List<Shot> shots;
-    private List<Shot> likes;
     private ShotsAdapter mAdapter;
     private IPlayerPresenter mPresenter;
     private ValueAnimator mAnimator;
+    private String frontImageUrl;
+    private AlertDialog.Builder mBuilder;
+    private AlertDialog dialog;
 
 
     @Override
@@ -112,6 +118,10 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView ,Vi
             }
         });
         frontImageView.setOnClickListener(view -> mAnimator.start());
+        frontImageView.setOnLongClickListener(view -> {
+            dialog.show();
+            return true;
+        });
         mHoverView.setOnClickListener(view -> mAnimator.start());
         if(mUser!=null){
             showPlayerInfo();
@@ -119,6 +129,11 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView ,Vi
             mPresenter.loadUserProfile(
                 (String) SharedPreferencesUtils.getFromSpfs(this,"token",null));
         }
+        mBuilder = new AlertDialog.Builder(this);
+        mBuilder.setItems(new String[] { "保存图片" }, (DialogInterface dialogInterface, int i) -> {
+            FileUtils.saveImage(this,frontImageUrl);
+        });
+        dialog = mBuilder.create();
 
     }
 
@@ -178,7 +193,14 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView ,Vi
         mAdapter=new ShotsAdapter(shots,this);
         mAdapter.setListener(position -> {
             Shot shot=shots.get(position);
-            Glide.with(PlayerActivity.this).load(shot.getImages().getHidpi()).crossFade().into(frontImageView);
+            frontImageUrl=shot.getImages().getHidpi();
+            if(!StringUtils.checkAvailable(frontImageUrl)){
+                frontImageUrl=shot.getImages().getNormal();
+            }
+            if(!StringUtils.checkAvailable(frontImageUrl)){
+                frontImageUrl=shot.getImages().getTeaser();
+            }
+            Glide.with(PlayerActivity.this).load(frontImageUrl).crossFade().into(frontImageView);
             frontImageView.setAlpha(1f);
             mHoverView.setAlpha(1f);
             mHoverView.setVisibility(View.VISIBLE);
