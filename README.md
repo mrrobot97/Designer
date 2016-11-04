@@ -26,20 +26,29 @@
 
 feature:
 
-	1.页面支持滑动返回。
-	2.离线缓存浏览。
-	
-	
+	1.支持页面滑动返回
+	2.支持离线缓存浏览
+	3.支持JAVA 8
+	4.支持Oauth2.0认证登录
+		
 	
 todo list：
 
-	1.	使用数据库离线缓存,节省客户端流量。
+1.  ~~使用数据库离线缓存,节省客户端流量。~~ (已使用OKHttp离线缓存代替)
 	2.	使用palette动态改变背景色，增加美观性。
-	3.	使用Dribbble提供的Oauth2认证允许用户登录，并对每个设计进行评论，点赞，收藏等功能。
+	3.	使用Dribbble提供的Oauth2认证允许用户登录，并对每个设计进行评论，点赞，收藏等功能。(已初步实现Oauth2.0认证登陆)
 	4.	改善图片加载速度，提供友好的用户反馈。
 	5. 发现并消灭BUG，提高软件使用的稳定性。
 	
 	
 欢迎fork、issue、star。
+
+
+#ChangeLog
+##version 0.1.1
 	
-[release apk download](http://ockr1qfi1.bkt.clouddn.com/Designer.apk)
+	1.加入Oauth2.0登录入口，用户可以登录并查看自己的个人信息。
+	2.利用OKHttp加入离线缓存，没有网也可以愉快的玩耍了。
+##[version 0.1.1 apk download](http://ockr1qfi1.bkt.clouddn.com/release0.1.1.apk)
+	
+##[version 0.1.0 apk download](http://ockr1qfi1.bkt.clouddn.com/Designer.apk)
