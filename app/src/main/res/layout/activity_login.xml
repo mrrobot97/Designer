@@ -35,7 +35,8 @@
         android:textColor="@android:color/white"
         android:background="@drawable/round_rectangle"
         android:layout_width="200dp"
-        android:layout_height="50dp"
+        android:layout_height="70dp"
+        android:translationZ="10dp"
         />
 
     <Button
@@ -49,7 +50,8 @@
         android:textColor="@android:color/white"
         android:background="@drawable/round_rectangle"
         android:layout_width="200dp"
-        android:layout_height="50dp"
+        android:layout_height="70dp"
+        android:translationZ="10dp"
         />
 
   </RelativeLayout>
@@ -80,7 +82,7 @@
 
   <RelativeLayout
       android:id="@+id/loading_layout"
-      android:background="@color/viewLoadingBg"
+      android:background="@color/semiBlackBg"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:visibility="gone"

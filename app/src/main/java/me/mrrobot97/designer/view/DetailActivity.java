@@ -5,17 +5,18 @@ import android.animation.ValueAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spannable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,9 +32,9 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import java.util.List;
 import me.mrrobot97.designer.R;
 import me.mrrobot97.designer.SwipeActivity.SwipeBackActivity;
+import me.mrrobot97.designer.Utils.BitmapUtils;
 import me.mrrobot97.designer.Utils.FileUtils;
 import me.mrrobot97.designer.Utils.ScreenUtils;
-import me.mrrobot97.designer.Utils.StringUtils;
 import me.mrrobot97.designer.adapter.AttachmentsAdapter;
 import me.mrrobot97.designer.customViews.CircleImageView;
 import me.mrrobot97.designer.customViews.HoverView;
@@ -44,6 +45,8 @@ import me.mrrobot97.designer.presenter.DetailPresenter;
 import me.mrrobot97.designer.presenter.IDetailPresenter;
 import me.mrrobot97.designer.retrofit.ApiClient;
 import okhttp3.OkHttpClient;
+
+import static me.mrrobot97.designer.Utils.StringUtils.checkAvailable;
 
 //// TODO: 16/11/4 DetailActivity界面加载图片太慢，待解决
 public class DetailActivity extends SwipeBackActivity implements IDetailView {
@@ -61,6 +64,7 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
   @BindView(R.id.share_iv) ImageView mShareIv;
   @BindView(R.id.recyclerview) RecyclerView attachmentRecyclerview;
   @BindView(R.id.attachment_layout) RelativeLayout attachmentLayout;
+  @BindView(R.id.profile_layout)RelativeLayout profileLayout;
 
   private Shot mShot;
   private int screenWidth;
@@ -135,28 +139,23 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
     commentsCnt.setText(mShot.getComments_count() + "");
     likesCnt.setText(mShot.getLikes_count() + "");
     mShareIv.setOnClickListener(view -> shareShot());
+
+
+    screenWidth = ScreenUtils.getScreenWidthAndHeight(getApplicationContext())[0];
+    mImageView.setMinimumHeight(screenWidth * 3 / 4);
+    url = mShot.getImages().getHidpi();
+    if (!checkAvailable(url)) {
+      url = mShot.getImages().getNormal();
+    }if (!checkAvailable(url)) {
+      url = mShot.getImages().getTeaser();
+    }
     SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
       @Override
       public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
         avatar.setBitmap(resource);
       }
     };
-
-    screenWidth = ScreenUtils.getScreenWidthAndHeight(getApplicationContext())[0];
-    mImageView.setMinimumHeight(screenWidth * 3 / 4);
-    url = mShot.getImages().getHidpi();
-    if (!StringUtils.checkAvailable(url)) {
-      url = mShot.getImages().getNormal();
-    }if (!StringUtils.checkAvailable(url)) {
-      url = mShot.getImages().getTeaser();
-    }
-
-    Log.d("yjw","url="+url);
     Glide.with(this).load(mShot.getUser().getAvatar_url()).asBitmap().into(target);
-
-    Glide.with(this).load(url).crossFade().into(mImageView);
-    Glide.with(this).load(url).crossFade().into(frontImageView);
-
     mImageView.setOnClickListener(view -> {
       frontImageUrl = url;
       showFullScreenView();
@@ -192,6 +191,49 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
         ActivityCompat.startActivity(DetailActivity.this, intent, options.toBundle());
       }
     });
+
+    changeToolBarColor();
+    generateBlurBitmap();
+  }
+
+  private void changeToolBarColor() {
+    //使用Palette动态改变Toolbar背景色
+    SimpleTarget<Bitmap> targetPalette=new SimpleTarget<Bitmap>() {
+      public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+        Palette.from(resource).generate(palette -> {
+          int vibrantColor=palette.getVibrantColor(getResources().getColor(R.color.colorPrimaryDark));
+          mToolbar.post(()->{
+            mToolbar.setBackgroundColor(vibrantColor);
+            profileLayout.setBackgroundColor(vibrantColor);
+            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
+              getWindow().setStatusBarColor(vibrantColor);
+          });
+        });
+      }
+    };
+    Glide.with(this).load(mShot.getImages().getTeaser()).asBitmap().into(targetPalette);
+
+  }
+
+  private void generateBlurBitmap() {
+    String blurUrl=null;
+    //复用在BrowseAcrtivity中下载的缩略图
+    if (screenWidth >= 720) {
+      blurUrl=mShot.getImages().getNormal();
+      if(!checkAvailable(url)) url=mShot.getImages().getTeaser();
+    } else {
+      blurUrl=mShot.getImages().getTeaser();
+    }
+    SimpleTarget<Bitmap> target=new SimpleTarget<Bitmap>() {
+      @Override
+      public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+        Bitmap blurImage= BitmapUtils.fastblur(resource,0.4f,8);
+        BitmapDrawable drawable=new BitmapDrawable(blurImage);
+        Glide.with(DetailActivity.this).load(url).placeholder(drawable).crossFade().into(mImageView);
+        Glide.with(DetailActivity.this).load(url).placeholder(drawable).crossFade().into(frontImageView);
+      }
+    };
+    Glide.with(DetailActivity.this).load(blurUrl).asBitmap().into(target);
   }
 
   void showFullScreenView() {

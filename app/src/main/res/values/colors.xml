@@ -7,6 +7,7 @@
     <color name="textColorLight">#DDDDDD</color>
     <color name="tabBackgroundColor">#996A6A6A</color>
     <color name="viewLoadingBg">#CC000000</color>
+    <color name="semiBlackBg">#AA000000</color>
     <color name="textColorWhite">#EEEEEE</color>
     <color name="textColorBlack">#000000</color>
     <color name="viewColorBackground">#3C3C3C</color>

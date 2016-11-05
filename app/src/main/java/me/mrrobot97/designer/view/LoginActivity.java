@@ -16,11 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import me.mrrobot97.designer.R;
+import me.mrrobot97.designer.Utils.FileUtils;
 import me.mrrobot97.designer.Utils.SharedPreferencesUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -48,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
   private final String CLIENT_ID="a655a6b9c5440762a30d30f85142afc6fe34ff3419ee5864130034f613b1791c";
   private final String CLIENT_SECRET="9c5de21b644560851a8823fb47de3c3ce223d9d3f67a27a8c73346ff02caa98a";
   private final String CACHE_DIR="/data/data/me.mrrobot97.designer/app_webview";
+  private final String CACHE_FILE="/data/data/me.mrrobot97.designer/cache/org.chromium.android_webview";
   private String code;
   private String token;
   private OkHttpClient client;
@@ -81,14 +82,15 @@ public class LoginActivity extends AppCompatActivity {
     settings.setAppCacheEnabled(false);
     settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
     settings.setJavaScriptEnabled(true);
+    settings.setDomStorageEnabled(false);
     mWebView.setWebViewClient(new WebViewClient(){
       @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
         if(url.contains("code")){
+          //重定向网页，参数中包含了code
           code=url.substring(url.lastIndexOf("=")+1);
           mWebviewLayout.setVisibility(View.GONE);
-          backLayout.setVisibility(View.VISIBLE);
           getToken();
-          return true;
+          return false;
         }
         view.loadUrl(url);
         return true;
@@ -108,8 +110,10 @@ public class LoginActivity extends AppCompatActivity {
   }
 
   private void login() {
-    File cacheDir=new File(CACHE_DIR);
-    deleteDirOrFile(cacheDir);
+    //两个缓存目录下的文件都要手动删除，否则重新登录的时候会因为缓存而直接进入
+    //目前每次从新打开APP第一次登录正常，之后的全部直接走缓存了。
+    FileUtils.deleteFileOrDir(CACHE_DIR);
+    FileUtils.deleteFileOrDir(CACHE_FILE);
     mWebView.clearCache(true);
     Map<String,String> header=new HashMap<>();
     header.put("Cache-Control","no-cache");
@@ -119,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
   }
 
   public void getToken() {
-    backLayout.setVisibility(View.INVISIBLE);
+    backLayout.setVisibility(View.VISIBLE);
     loadingLayout.setVisibility(View.VISIBLE);
     RequestBody postParam= new FormBody.Builder().add("client_id",CLIENT_ID).add("client_secret",CLIENT_SECRET).add("code",code).build();
     final Request request=new Request.Builder().url(TOKEN_URL).post(postParam).build();
@@ -146,19 +150,5 @@ public class LoginActivity extends AppCompatActivity {
         }
       }
     });
-  }
-
-  private void deleteDirOrFile(File file){
-    if(file.isDirectory()){
-      for(File f:file.listFiles()){
-        if(f.isDirectory()){
-          deleteDirOrFile(f);
-        }else{
-          f.delete();
-        }
-      }
-    }else{
-      file.delete();
-    }
   }
 }
