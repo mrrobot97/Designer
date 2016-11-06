@@ -20,10 +20,15 @@ import android.text.Spannable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.bumptech.glide.Glide;
@@ -35,6 +40,7 @@ import me.mrrobot97.designer.SwipeActivity.SwipeBackActivity;
 import me.mrrobot97.designer.Utils.BitmapUtils;
 import me.mrrobot97.designer.Utils.FileUtils;
 import me.mrrobot97.designer.Utils.ScreenUtils;
+import me.mrrobot97.designer.Utils.SharedPreferencesUtils;
 import me.mrrobot97.designer.adapter.AttachmentsAdapter;
 import me.mrrobot97.designer.customViews.CircleImageView;
 import me.mrrobot97.designer.customViews.HoverView;
@@ -60,11 +66,15 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
   @BindView(R.id.likes_cnt) TextView likesCnt;
   @BindView(R.id.hover_view) HoverView mHoverView;
   @BindView(R.id.front_image_view) ImageView frontImageView;
-  @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
+  @BindView(R.id.comments_recycler_view) RecyclerView mCommentsRecycler;
   @BindView(R.id.share_iv) ImageView mShareIv;
   @BindView(R.id.recyclerview) RecyclerView attachmentRecyclerview;
   @BindView(R.id.attachment_layout) RelativeLayout attachmentLayout;
   @BindView(R.id.profile_layout)RelativeLayout profileLayout;
+  @BindView(R.id.edit_comment)EditText mEditComment;
+  @BindView(R.id.bt_send)Button mBtSend;
+
+  public static final int ANIM_DURATION=500;
 
   private Shot mShot;
   private int screenWidth;
@@ -78,6 +88,9 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
   private MyAdapter mAdapter = new MyAdapter();
   private AttachmentsAdapter attachAdapter;
   private String frontImageUrl;
+  private boolean isLogin=false;
+  private String token=null;
+
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -86,11 +99,10 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
     setSupportActionBar(mToolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowTitleEnabled(false);
-    mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        finish();
-      }
-    });
+    mToolbar.setNavigationOnClickListener(view -> finish());
+    screenWidth = ScreenUtils.getScreenWidthAndHeight(getApplicationContext())[0];
+    isLogin= (boolean) SharedPreferencesUtils.getFromSpfs(this,"login",false);
+    token= (String) SharedPreferencesUtils.getFromSpfs(this,"access_token",null);
     init();
   }
 
@@ -99,10 +111,7 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
     init();
   }
 
-  private void init() {
-    mShot = (Shot) getIntent().getSerializableExtra("shot");
-    mPresenter = new DetailPresenter(this);
-    client = ApiClient.getClient();
+  private void prepareAnimator(){
     mAnimator = ValueAnimator.ofFloat(1f, 0f);
     mAnimator.setDuration(200);
     mAnimator.setInterpolator(new DecelerateInterpolator());
@@ -111,9 +120,6 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
       mHoverView.setAlpha(alpha);
       frontImageView.setAlpha(alpha);
     });
-    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-    attachmentRecyclerview.setLayoutManager(
-        new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     mAnimator.addListener(new Animator.AnimatorListener() {
       @Override public void onAnimationStart(Animator animator) {
 
@@ -132,16 +138,15 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
 
       }
     });
-    screenWidth = ScreenUtils.getScreenWidthAndHeight(getApplicationContext())[0];
-    shotTitle.setText(mShot.getTitle());
-    author.setText(mShot.getUser().getUsername());
-    viewCnt.setText(mShot.getViews_count() + "");
-    commentsCnt.setText(mShot.getComments_count() + "");
-    likesCnt.setText(mShot.getLikes_count() + "");
-    mShareIv.setOnClickListener(view -> shareShot());
+  }
 
-
-    screenWidth = ScreenUtils.getScreenWidthAndHeight(getApplicationContext())[0];
+  private void init() {
+    mShot = (Shot) getIntent().getSerializableExtra("shot");
+    mPresenter = new DetailPresenter(this);
+    client = ApiClient.getClient();
+    mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
+    attachmentRecyclerview.setLayoutManager(
+        new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     mImageView.setMinimumHeight(screenWidth * 3 / 4);
     url = mShot.getImages().getHidpi();
     if (!checkAvailable(url)) {
@@ -149,35 +154,30 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
     }if (!checkAvailable(url)) {
       url = mShot.getImages().getTeaser();
     }
-    SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
-      @Override
-      public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-        avatar.setBitmap(resource);
-      }
-    };
-    Glide.with(this).load(mShot.getUser().getAvatar_url()).asBitmap().into(target);
-    mImageView.setOnClickListener(view -> {
-      frontImageUrl = url;
-      showFullScreenView();
-    });
     mBuilder = new AlertDialog.Builder(this);
     mBuilder.setItems(new String[] { "保存图片" }, (DialogInterface dialogInterface, int i) -> {
       FileUtils.saveImage(this,frontImageUrl);
     });
     dialog = mBuilder.create();
+    setListener();
+    prepareAnimator();
+    setTextInfo();
+    changeToolBarColor();
+    generateBlurBitmap();
+    loadData();
+  }
+
+  private void setListener() {
+    mImageView.setOnClickListener(view -> {
+      frontImageUrl = url;
+      showFullScreenView();
+    });
     frontImageView.setOnClickListener(view -> mAnimator.start());
     mHoverView.setOnClickListener(view -> mAnimator.start());
     frontImageView.setOnLongClickListener(view -> {
       dialog.show();
       return true;
     });
-    //load attachments
-    if (mShot.getAttachments_count() > 0) {
-      mPresenter.loadAttachments(mShot.getId());
-    }
-    //load comments
-    mPresenter.loadComments(mShot.getId());
-
     avatar.setOnClickListener(view -> {
       Intent intent = new Intent(DetailActivity.this, PlayerActivity.class);
       intent.putExtra("author", mShot.getUser());
@@ -191,9 +191,48 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
         ActivityCompat.startActivity(DetailActivity.this, intent, options.toBundle());
       }
     });
+    if(!isLogin){
+      mEditComment.setEnabled(false);
+    }
+    mBtSend.setOnClickListener(view -> {
+      if(!isLogin){
+        Toast.makeText(this, "Please sign in.", Toast.LENGTH_SHORT).show();
+        return;
+      }
+      String comment=mEditComment.getText().toString();
+      if(comment==null||comment.trim().length()==0) {
+        Toast.makeText(this, "Empty comment.", Toast.LENGTH_SHORT).show();
+        return;
+      }
+        mEditComment.setText("");
+        mPresenter.postComment(mShot.getId(),comment);
+    });
+  }
 
-    changeToolBarColor();
-    generateBlurBitmap();
+  private void setTextInfo() {
+    shotTitle.setText(mShot.getTitle());
+    author.setText(mShot.getUser().getUsername());
+    viewCnt.setText(mShot.getViews_count() + "");
+    commentsCnt.setText(mShot.getComments_count() + "");
+    likesCnt.setText(mShot.getLikes_count() + "");
+    mShareIv.setOnClickListener(view -> shareShot());
+  }
+
+  private void loadData() {
+    //load avatar
+    SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
+      @Override
+      public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+        avatar.setBitmap(resource);
+      }
+    };
+    Glide.with(this).load(mShot.getUser().getAvatar_url()).asBitmap().into(target);
+    //load attachments
+    if (mShot.getAttachments_count() > 0) {
+      mPresenter.loadAttachments(mShot.getId());
+    }
+    //load comments
+    mPresenter.loadComments(mShot.getId());
   }
 
   private void changeToolBarColor() {
@@ -212,7 +251,6 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
       }
     };
     Glide.with(this).load(mShot.getImages().getTeaser()).asBitmap().into(targetPalette);
-
   }
 
   private void generateBlurBitmap() {
@@ -258,7 +296,19 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
   @Override public void showComments(List<Comment> commments) {
     mComments = commments;
     mAdapter = new MyAdapter();
-    mRecyclerView.setAdapter(mAdapter);
+    mCommentsRecycler.setAdapter(mAdapter);
+    mCommentsRecycler.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+      @Override public boolean onPreDraw() {
+        mCommentsRecycler.getViewTreeObserver().removeOnPreDrawListener(this);
+        mCommentsRecycler.setScaleY(0.1f);
+        mCommentsRecycler.animate()
+            .scaleY(1f)
+            .setDuration(ANIM_DURATION)
+            .setInterpolator(new AccelerateInterpolator())
+            .start();
+        return true;
+      }
+    });
   }
 
   @Override public void showAttachments(final List<Attachment> attachments) {
@@ -276,6 +326,15 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
       showFullScreenView();
     });
     attachmentRecyclerview.setAdapter(attachAdapter);
+  }
+
+  @Override public void showIfCommentSuccess(Comment comment,boolean success) {
+    if (success){
+      mComments.add(comment);
+      mAdapter.notifyItemInserted(mComments.size()-1);
+    }else{
+      Toast.makeText(this, "Comment failed,Please make that you have permission to comment.", Toast.LENGTH_SHORT).show();
+    }
   }
 
   class MyAdapter extends RecyclerView.Adapter {

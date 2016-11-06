@@ -5,6 +5,9 @@ package me.mrrobot97.designer.presenter;
  */
 
 public interface IDetailPresenter {
-    void loadComments(String shotId);
-    void loadAttachments(String id);
+  void loadComments(String shotId);
+
+  void loadAttachments(String id);
+
+  void postComment(String id, String comment);
 }

@@ -29,7 +29,6 @@ import me.mrrobot97.designer.SwipeActivity.SwipeBackActivity;
 import me.mrrobot97.designer.Utils.BitmapUtils;
 import me.mrrobot97.designer.Utils.FileUtils;
 import me.mrrobot97.designer.Utils.ScreenUtils;
-import me.mrrobot97.designer.Utils.SharedPreferencesUtils;
 import me.mrrobot97.designer.Utils.StringUtils;
 import me.mrrobot97.designer.adapter.ShotsAdapter;
 import me.mrrobot97.designer.customViews.HoverView;
@@ -123,7 +122,7 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView, Vi
     if (mUser != null) {
       showPlayerInfo();
     } else {
-      mPresenter.loadUserProfile((String) SharedPreferencesUtils.getFromSpfs(this, "token", null));
+      mPresenter.loadUserProfile();
     }
     mBuilder = new AlertDialog.Builder(this);
     mBuilder.setItems(new String[] { "保存图片" }, (DialogInterface dialogInterface, int i) -> {

@@ -49,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
   private final String CLIENT_SECRET="9c5de21b644560851a8823fb47de3c3ce223d9d3f67a27a8c73346ff02caa98a";
   private final String CACHE_DIR="/data/data/me.mrrobot97.designer/app_webview";
   private final String CACHE_FILE="/data/data/me.mrrobot97.designer/cache/org.chromium.android_webview";
+  private final String SCOPE="public+write+comment";
   private String code;
   private String token;
   private OkHttpClient client;
@@ -119,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
     header.put("Cache-Control","no-cache");
     mWebviewLayout.setVisibility(View.VISIBLE);
     backLayout.setVisibility(View.INVISIBLE);
-    mWebView.loadUrl(AUTH_URL+"?client_id="+CLIENT_ID,header);
+    mWebView.loadUrl(AUTH_URL+"?client_id="+CLIENT_ID+"&scope="+SCOPE,header);
   }
 
   public void getToken() {

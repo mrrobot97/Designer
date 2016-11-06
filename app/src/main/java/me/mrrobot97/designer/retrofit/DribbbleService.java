@@ -1,12 +1,14 @@
 package me.mrrobot97.designer.retrofit;
 
 import java.util.List;
-
 import me.mrrobot97.designer.model.Attachment;
 import me.mrrobot97.designer.model.Comment;
 import me.mrrobot97.designer.model.Shot;
 import me.mrrobot97.designer.model.User;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -37,7 +39,9 @@ public interface DribbbleService {
     rx.Observable<List<Attachment>> loadAttachments(@Path("id")String id);
 
     @GET("user")
-    rx.Observable<User> loadUserProfile(@Query("access_token")String token);
+    rx.Observable<User> loadUserProfile();
 
-
+    @FormUrlEncoded
+    @POST("shots/{id}/comments")
+    rx.Observable<Comment> postComment(@Path("id")String id,@Field("body") String comment);
 }

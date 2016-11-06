@@ -26,4 +26,8 @@ public class DetailPresenter implements IDetailPresenter {
     public void loadAttachments(String id) {
         mModel.loadAttachments(id, attachments -> mView.showAttachments(attachments));
     }
+
+    @Override public void postComment(String id, String comment) {
+        mModel.postComment(id,comment,(comment1,success) -> mView.showIfCommentSuccess(comment1,success));
+    }
 }

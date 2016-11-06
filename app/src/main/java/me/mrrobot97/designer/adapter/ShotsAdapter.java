@@ -26,19 +26,31 @@ public class ShotsAdapter extends RecyclerView.Adapter {
 
   private List<Shot> mData;
   private int screenWidth;
+  private int screenHeight;
   private Context mContext;
   private static final int offset = 4;
+  public static final int ANIM_DURATION=500;
+
 
   public ShotsAdapter(List<Shot> data, Context context) {
     mData = data;
     mContext = context;
     screenWidth = ScreenUtils.getScreenWidthAndHeight(mContext)[0];
+    screenHeight=ScreenUtils.getScreenWidthAndHeight(mContext)[1];
   }
 
   private OnItemClickListener mListener;
 
   public void setListener(OnItemClickListener listener) {
     mListener = listener;
+  }
+
+  private void runAnimation(View view){
+    view.setTranslationY(screenHeight);
+    view.animate()
+        .translationY(0)
+        .setDuration(ANIM_DURATION)
+        .setStartDelay(300).start();
   }
 
   @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -49,6 +61,7 @@ public class ShotsAdapter extends RecyclerView.Adapter {
     ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(width, height);
     view.setLayoutParams(params);
     MyHolder holder = new MyHolder(view);
+    runAnimation(view);
     return holder;
   }
 

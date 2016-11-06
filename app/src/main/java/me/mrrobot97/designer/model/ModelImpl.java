@@ -183,8 +183,8 @@ public class ModelImpl implements IModel {
                 });
     }
 
-  @Override public void loadUserProfile(String token, final UserListener listener) {
-      observable.loadUserProfile(token)
+  @Override public void loadUserProfile( final UserListener listener) {
+      observable.loadUserProfile()
           .subscribeOn(Schedulers.newThread())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(new Subscriber<User>() {
@@ -200,5 +200,26 @@ public class ModelImpl implements IModel {
               listener.onUserLoaded(user);
             }
           });
+  }
+
+  @Override
+  public void postComment(String id, String comment, CommentPostListener listener) {
+    observable.postComment(id,comment)
+        .subscribeOn(Schedulers.newThread())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Subscriber<Comment>() {
+          @Override public void onCompleted() {
+
+          }
+
+          @Override public void onError(Throwable e) {
+            Log.d("yjw","comment failed");
+            listener.onCommentPosted(null,false);
+          }
+
+          @Override public void onNext(Comment comment) {
+            listener.onCommentPosted(comment,true);
+          }
+        });
   }
 }

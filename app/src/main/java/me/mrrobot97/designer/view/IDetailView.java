@@ -12,4 +12,5 @@ import me.mrrobot97.designer.model.Comment;
 public interface IDetailView {
     void showComments(List<Comment> commments);
     void showAttachments(List<Attachment> attachments);
+    void showIfCommentSuccess(Comment comment,boolean success);
 }

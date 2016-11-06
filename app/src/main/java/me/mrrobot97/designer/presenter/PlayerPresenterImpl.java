@@ -22,7 +22,7 @@ public class PlayerPresenterImpl implements IPlayerPresenter {
         mModel.loadUserShots(userId, shots -> mView.showShots(shots));
     }
 
-    @Override public void loadUserProfile(String token) {
-        mModel.loadUserProfile(token, user -> mView.showPlayerInfoAsync(user));
+    @Override public void loadUserProfile() {
+        mModel.loadUserProfile( user -> mView.showPlayerInfoAsync(user));
     }
 }

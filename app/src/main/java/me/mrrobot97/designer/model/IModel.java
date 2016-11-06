@@ -7,40 +7,47 @@ import java.util.List;
  */
 
 public interface IModel {
-    void loadShots(String sort,int page,int per_page,ShotsListener listener);
+  void loadShots(String sort, int page, int per_page, ShotsListener listener);
 
-    void loadShotDetail(String id,ShotListener listener);
+  void loadShotDetail(String id, ShotListener listener);
 
-    void loadUser(String id,UserListener listener);
+  void loadUser(String id, UserListener listener);
 
-    void loadComments(String shotId,CommentsListener listener);
+  void loadComments(String shotId, CommentsListener listener);
 
-    void loadUserShots(String userId,UserShotsLoadListener listener);
+  void loadUserShots(String userId, UserShotsLoadListener listener);
 
-    void loadAttachments(String id,AttachmentsLoadListener listener);
+  void loadAttachments(String id, AttachmentsLoadListener listener);
 
-    void loadUserProfile(String token,UserListener listener);
+  void loadUserProfile( UserListener listener);
 
-    interface ShotsListener{
-        void onShotsLoaded(List<Shot> shots,boolean success);
-    }
-    interface ShotListener{
-        void onShotLoaded(Shot shot);
-    }
-    interface UserListener{
-        void onUserLoaded(User user);
-    }
+  void postComment(String id,String comment,CommentPostListener listener);
 
-    interface CommentsListener{
-        void onCommentsLoader(List<Comment> comments);
-    }
+  interface ShotsListener {
+    void onShotsLoaded(List<Shot> shots, boolean success);
+  }
 
-    interface UserShotsLoadListener{
-        void onUserShotsLoaded(List<Shot> shots);
-    }
+  interface ShotListener {
+    void onShotLoaded(Shot shot);
+  }
 
-    interface AttachmentsLoadListener{
-        void onAttachmentsLoaded(List<Attachment> attachments);
-    }
+  interface UserListener {
+    void onUserLoaded(User user);
+  }
 
+  interface CommentsListener {
+    void onCommentsLoader(List<Comment> comments);
+  }
+
+  interface UserShotsLoadListener {
+    void onUserShotsLoaded(List<Shot> shots);
+  }
+
+  interface AttachmentsLoadListener {
+    void onAttachmentsLoaded(List<Attachment> attachments);
+  }
+
+  interface CommentPostListener {
+    void onCommentPosted(Comment comment,boolean success);
+  }
 }

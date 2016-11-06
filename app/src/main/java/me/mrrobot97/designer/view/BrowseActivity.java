@@ -40,6 +40,7 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView {
   @BindView(R.id.tab_layout) TabLayout mTabLayout;
   @BindView(R.id.view_pager) ViewPager mViewPager;
 
+  public static final int ANIM_DURATION=500;
   private Snackbar mSnackBar;
   private FragmentPagerAdapter mAdapter;
   private String[] mTitles = new String[] { "Popular", "Debuts", "Recent" };
@@ -54,6 +55,7 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView {
   private BaseFragment[] mFragments = new BaseFragment[3];
 
   private IBrowsePresenter mPresenter;
+  private MenuItem userProfileItem;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -87,6 +89,20 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView {
     } else {
       init();
     }
+  }
+
+  private void startToolbarAnimation() {
+    int toolbarHeight=ScreenUtils.dp2px(this,56);
+    mToolbar.setTranslationY(-toolbarHeight);
+    userProfileItem.getActionView().setTranslationY(-toolbarHeight);
+    mToolbar.animate()
+        .translationY(0)
+        .setDuration(ANIM_DURATION)
+        .setStartDelay(300).start();
+    userProfileItem.getActionView().animate()
+        .translationY(0)
+        .setDuration(ANIM_DURATION)
+        .setStartDelay(500).start();
   }
 
   private void clearUserCache() {
@@ -249,11 +265,15 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView {
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_browse, menu);
     MenuItem item = menu.getItem(1);
+    userProfileItem=menu.findItem(R.id.user);
+    userProfileItem.setActionView(R.layout.user_menu_item_view);
+    userProfileItem.getActionView().setOnClickListener(view -> showUserProfile());
     if (isLogin) {
       item.setTitle("Log out");
     } else {
       item.setTitle("Sign in");
     }
-    return super.onCreateOptionsMenu(menu);
+    startToolbarAnimation();
+    return true;
   }
 }

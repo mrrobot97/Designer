@@ -6,6 +6,7 @@
     android:id="@+id/activity_browse"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     tools:context="me.mrrobot97.designer.view.BrowseActivity">
 
     <android.support.v7.widget.Toolbar
