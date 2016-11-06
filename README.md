@@ -44,11 +44,14 @@ todo list：
 欢迎fork、issue、star。
 
 
-#ChangeLog
-##version 0.1.1
+### 项目中使用了Java8 lambda，编译前请确保您的机器上安装了JDK1.8以及gradle2.2或以上。
+
+
+# ChangeLog
+## version 0.1.1
 	
 	1.加入Oauth2.0登录入口，用户可以登录并查看自己的个人信息。
 	2.利用OKHttp加入离线缓存，没有网也可以愉快的玩耍了。
-##[version 0.1.1 apk download](http://ockr1qfi1.bkt.clouddn.com/release0.1.1.apk)
+## [version 0.1.1 apk download](http://ockr1qfi1.bkt.clouddn.com/release0.1.1.apk)
 	
-##[version 0.1.0 apk download](http://ockr1qfi1.bkt.clouddn.com/Designer.apk)
+## [version 0.1.0 apk download](http://ockr1qfi1.bkt.clouddn.com/Designer.apk)
