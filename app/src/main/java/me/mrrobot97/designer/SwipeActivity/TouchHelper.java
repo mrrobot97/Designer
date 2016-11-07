@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
+import me.mrrobot97.designer.MyApplication;
 
 /**
  * Created by mrrobot on 16/10/21.

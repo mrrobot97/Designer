@@ -31,14 +31,14 @@ import me.mrrobot97.designer.Utils.FileUtils;
 import me.mrrobot97.designer.Utils.ScreenUtils;
 import me.mrrobot97.designer.Utils.StringUtils;
 import me.mrrobot97.designer.adapter.ShotsAdapter;
+import me.mrrobot97.designer.contracts.PlayerContract;
 import me.mrrobot97.designer.customViews.HoverView;
 import me.mrrobot97.designer.model.Shot;
 import me.mrrobot97.designer.model.User;
-import me.mrrobot97.designer.presenter.IPlayerPresenter;
-import me.mrrobot97.designer.presenter.PlayerPresenterImpl;
+import me.mrrobot97.designer.presenter.PlayerPresenter;
 
 //// TODO: 16/11/5 用户名与所在地址显示位置有问题,待解决
-public class PlayerActivity extends SwipeBackActivity implements IPlayerView, View.OnClickListener {
+public class PlayerActivity extends SwipeBackActivity implements PlayerContract.IPlayerView, View.OnClickListener {
   @BindView(R.id.tool_bar) Toolbar mToolbar;
   @BindView(R.id.avatar) ImageView avatar;
   @BindView(R.id.name) TextView name;
@@ -62,7 +62,7 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView, Vi
   private User mUser;
   private List<Shot> shots;
   private ShotsAdapter mAdapter;
-  private IPlayerPresenter mPresenter;
+  private PlayerContract.IPlayerPresenter mPresenter;
   private ValueAnimator mAnimator;
   private String frontImageUrl;
   private AlertDialog.Builder mBuilder;
@@ -82,7 +82,7 @@ public class PlayerActivity extends SwipeBackActivity implements IPlayerView, Vi
   }
 
   private void init() {
-    mPresenter = new PlayerPresenterImpl(this);
+    mPresenter = new PlayerPresenter(this);
     mUser = (User) getIntent().getSerializableExtra("author");
     mRecyclerView.setLayoutManager(
         new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));

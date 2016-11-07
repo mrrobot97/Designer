@@ -28,12 +28,12 @@ import me.mrrobot97.designer.Utils.FileUtils;
 import me.mrrobot97.designer.Utils.NetUtils;
 import me.mrrobot97.designer.Utils.ScreenUtils;
 import me.mrrobot97.designer.Utils.SharedPreferencesUtils;
+import me.mrrobot97.designer.contracts.BrowseContract;
 import me.mrrobot97.designer.model.Shot;
-import me.mrrobot97.designer.presenter.BrowsePresenterImpl;
-import me.mrrobot97.designer.presenter.IBrowsePresenter;
+import me.mrrobot97.designer.presenter.BrowsePresenter;
 import me.mrrobot97.designer.retrofit.ApiClient;
 
-public class BrowseActivity extends AppCompatActivity implements IBrowseView {
+public class BrowseActivity extends AppCompatActivity implements BrowseContract.IBrowseView {
   @BindView(R.id.activity_browse) RelativeLayout mContainer;
   @BindView(R.id.tool_bar) Toolbar mToolbar;
   @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout mRefreshLayout;
@@ -54,7 +54,7 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView {
 
   private BaseFragment[] mFragments = new BaseFragment[3];
 
-  private IBrowsePresenter mPresenter;
+  private BrowseContract.IBrowsePresenter mPresenter;
   private MenuItem userProfileItem;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +83,7 @@ public class BrowseActivity extends AppCompatActivity implements IBrowseView {
       }
       return true;
     });
-    mPresenter = new BrowsePresenterImpl(this);
+    mPresenter = new BrowsePresenter(this);
     if (!ifPermissionGranted()) {
       requestPermissions();
     } else {

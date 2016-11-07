@@ -1,18 +1,18 @@
 package me.mrrobot97.designer.presenter;
 
+import me.mrrobot97.designer.contracts.PlayerContract;
 import me.mrrobot97.designer.model.IModel;
 import me.mrrobot97.designer.model.ModelImpl;
-import me.mrrobot97.designer.view.IPlayerView;
 
 /**
  * Created by mrrobot on 16/10/24.
  */
 
-public class PlayerPresenterImpl implements IPlayerPresenter {
-    private IPlayerView mView;
+public class PlayerPresenter implements PlayerContract.IPlayerPresenter {
+    private PlayerContract.IPlayerView mView;
     private IModel mModel;
 
-    public PlayerPresenterImpl(IPlayerView view) {
+    public PlayerPresenter(PlayerContract.IPlayerView view) {
         mView = view;
         mModel=new ModelImpl();
     }

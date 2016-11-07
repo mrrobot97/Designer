@@ -29,7 +29,7 @@ public class ShotsAdapter extends RecyclerView.Adapter {
   private int screenHeight;
   private Context mContext;
   private static final int offset = 4;
-  public static final int ANIM_DURATION=500;
+  public static final int ANIM_DURATION=300;
 
 
   public ShotsAdapter(List<Shot> data, Context context) {
@@ -46,11 +46,13 @@ public class ShotsAdapter extends RecyclerView.Adapter {
   }
 
   private void runAnimation(View view){
-    view.setTranslationY(screenHeight);
+    view.setScaleX(0.69f);
+    view.setScaleY(0.69f);
     view.animate()
-        .translationY(0)
+        .scaleX(1f)
+        .scaleY(1f)
         .setDuration(ANIM_DURATION)
-        .setStartDelay(300).start();
+        .start();
   }
 
   @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -61,11 +63,11 @@ public class ShotsAdapter extends RecyclerView.Adapter {
     ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(width, height);
     view.setLayoutParams(params);
     MyHolder holder = new MyHolder(view);
-    runAnimation(view);
     return holder;
   }
 
   @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    runAnimation(holder.itemView);
     Shot shot = mData.get(position);
     //根据实际屏幕分辨率确定要加载的缩略图的尺寸
     String url=null;

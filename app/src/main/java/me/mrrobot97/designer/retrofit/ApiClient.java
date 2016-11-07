@@ -1,7 +1,7 @@
 package me.mrrobot97.designer.retrofit;
 
 import java.io.File;
-import me.mrrobot97.designer.SwipeActivity.MyApplication;
+import me.mrrobot97.designer.MyApplication;
 import me.mrrobot97.designer.Utils.NetUtils;
 import me.mrrobot97.designer.Utils.SharedPreferencesUtils;
 import okhttp3.Cache;

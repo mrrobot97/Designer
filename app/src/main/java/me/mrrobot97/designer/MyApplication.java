@@ -1,7 +1,8 @@
-package me.mrrobot97.designer.SwipeActivity;
+package me.mrrobot97.designer;
 
 import android.app.Application;
 import android.content.Context;
+import me.mrrobot97.designer.SwipeActivity.ActivityLifeCycleHelper;
 
 /**
  * Created by mrrobot on 16/10/21.

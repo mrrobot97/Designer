@@ -42,20 +42,20 @@ import me.mrrobot97.designer.Utils.FileUtils;
 import me.mrrobot97.designer.Utils.ScreenUtils;
 import me.mrrobot97.designer.Utils.SharedPreferencesUtils;
 import me.mrrobot97.designer.adapter.AttachmentsAdapter;
+import me.mrrobot97.designer.contracts.DetailContract;
 import me.mrrobot97.designer.customViews.CircleImageView;
 import me.mrrobot97.designer.customViews.HoverView;
 import me.mrrobot97.designer.model.Attachment;
 import me.mrrobot97.designer.model.Comment;
 import me.mrrobot97.designer.model.Shot;
 import me.mrrobot97.designer.presenter.DetailPresenter;
-import me.mrrobot97.designer.presenter.IDetailPresenter;
 import me.mrrobot97.designer.retrofit.ApiClient;
 import okhttp3.OkHttpClient;
 
 import static me.mrrobot97.designer.Utils.StringUtils.checkAvailable;
 
 //// TODO: 16/11/4 DetailActivity界面加载图片太慢，待解决
-public class DetailActivity extends SwipeBackActivity implements IDetailView {
+public class DetailActivity extends SwipeBackActivity implements DetailContract.IDetailView {
   @BindView(R.id.avatar) CircleImageView avatar;
   @BindView(R.id.shot_title) TextView shotTitle;
   @BindView(R.id.author) TextView author;
@@ -84,7 +84,7 @@ public class DetailActivity extends SwipeBackActivity implements IDetailView {
   private OkHttpClient client;
   private String url;
   private List<Comment> mComments;
-  private IDetailPresenter mPresenter;
+  private DetailContract.IDetailPresenter mPresenter;
   private MyAdapter mAdapter = new MyAdapter();
   private AttachmentsAdapter attachAdapter;
   private String frontImageUrl;
