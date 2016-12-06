@@ -54,7 +54,7 @@ public class BrowseActivity extends AppCompatActivity implements BrowseContract.
 
   private BaseFragment[] mFragments = new BaseFragment[3];
 
-  private BrowseContract.IBrowsePresenter mPresenter;
+  BrowseContract.IBrowsePresenter mPresenter;
   private MenuItem userProfileItem;
 
   @Override protected void onCreate(Bundle savedInstanceState) {

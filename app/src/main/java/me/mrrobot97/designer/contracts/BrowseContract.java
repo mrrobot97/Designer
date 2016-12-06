@@ -8,7 +8,7 @@ import me.mrrobot97.designer.model.Shot;
  */
 
 public interface BrowseContract {
-   interface IBrowseView {
+   public interface IBrowseView {
     void loadShots(int position,List<Shot> shots,boolean success);
     void refreshShots(int position,List<Shot> shots,boolean success);
     void loadMore(int position,List<Shot> shots,boolean success);
@@ -16,7 +16,7 @@ public interface BrowseContract {
     void showUserProfile();
   }
 
-   interface IBrowsePresenter {
+   public interface IBrowsePresenter {
     void load(int position);
     void refresh(int position);
     void loadMore(int position);
